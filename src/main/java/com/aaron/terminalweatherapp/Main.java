@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 public class Main {
     private static Scanner input = new Scanner(System.in);
+    public static LocationService locationService = new LocationService();
+    public static WeatherService weatherService;
 
     public static void main(String[] args) {
         run();
@@ -13,19 +15,20 @@ public class Main {
 
         intro();
         getCity();
+        weatherService();
 
         
     }
     public static void intro() {
         System.out.println("Welcome to Weather App!");
     }
+    
     public static void getCity() {
 
-        LocationService locationService = new LocationService();
         boolean cityFound = false;
 
-        while(!cityFound) { // This finds the Location
-            // Getting City Name from User
+        while(!cityFound) { 
+            // Get a City Name from User
             System.out.println("Enter city name:");
             String cityName = input.nextLine();
 
@@ -40,11 +43,11 @@ public class Main {
 
             } else if (result == 1) { // City Returned
 
-                if(checkCity(locationService) == 1) cityFound = true;         
+                if(checkCity(locationService) == 1) cityFound = true;        
             }
         }
     }
-
+    
     public static int checkCity(LocationService locationService) {
         while(true) { // Gets from user if this is the correct city
             System.out.println("Results found for " + locationService.displayName);
@@ -60,6 +63,11 @@ public class Main {
                 System.out.println("Looks like you printed something other than y or n");
             }
         }
+    }
+    
+    public static void weatherService() {
+        weatherService = new WeatherService(locationService.latitude, locationService.longitude);
+        weatherService.main();
     }
 }
 

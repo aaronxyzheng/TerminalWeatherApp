@@ -12,6 +12,7 @@ import com.google.gson.annotations.SerializedName; // Cause API returns city nam
 
 // This class tasks City Name and turns it into coordinates so Web API can Use
 public class LocationService {
+    
     public double longitude;
     public double latitude;
     @SerializedName("display_name")
