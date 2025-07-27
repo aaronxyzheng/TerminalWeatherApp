@@ -20,16 +20,18 @@ public class Main {
         System.out.println("Welcome to Weather App!");
     }
     public static void getCity() {
+
         LocationService locationService = new LocationService();
         boolean cityFound = false;
 
         while(!cityFound) { // This finds the Location
-            // Getting City Name
+            // Getting City Name from User
             System.out.println("Enter city name:");
             String cityName = input.nextLine();
 
             // Running Location Service
             int result = locationService.main(cityName);
+
             if(result == -1) { // Error 
                 continue;
 
@@ -38,22 +40,24 @@ public class Main {
 
             } else if (result == 1) { // City Returned
 
-                while(true) { // Gets from user if this is the correct city
-                    System.out.println("Results found for " + locationService.displayName);
-                    System.out.println("Is this correct? (y/n)");
-                    
-                    String userValidation = input.nextLine();
+                if(checkCity(locationService) == 1) cityFound = true;         
+            }
+        }
+    }
 
-                    if(userValidation.equals("y")) {
-                        cityFound = true;
-                        break;
-                    } else if (userValidation.equals("n")) {
-                        break;
-                    } else {
-                        System.out.println("Looks like you printed something other than y or n");
-                    }
-                }
-                
+    public static int checkCity(LocationService locationService) {
+        while(true) { // Gets from user if this is the correct city
+            System.out.println("Results found for " + locationService.displayName);
+            System.out.println("Is this correct? (y/n)");
+            
+            String userValidation = input.nextLine();
+
+            if(userValidation.equals("y")) {
+                return 1;
+            } else if (userValidation.equals("n")) {
+                return -1;
+            } else {
+                System.out.println("Looks like you printed something other than y or n");
             }
         }
     }
