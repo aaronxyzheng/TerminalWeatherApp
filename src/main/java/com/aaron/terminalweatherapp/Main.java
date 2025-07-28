@@ -5,17 +5,18 @@ import java.util.Scanner;
 public class Main {
     private static Scanner input = new Scanner(System.in);
     public static LocationService locationService = new LocationService();
-    public static WeatherService weatherService;
+
 
     public static void main(String[] args) {
         run();
         input.close();
     }
+
     public static void run() {
 
-        intro();
-        getCity();
-        weatherService();
+        intro(); // Welcomes User
+        getCity(); // Gets User Location and Coordinates
+        weatherService(); // Gets weather data for Location
 
         
     }
@@ -31,6 +32,8 @@ public class Main {
             // Get a City Name from User
             System.out.println("Enter city name:");
             String cityName = input.nextLine();
+
+            System.out.println("Looking for location...");
 
             // Running Location Service
             int result = locationService.main(cityName);
@@ -53,9 +56,10 @@ public class Main {
             System.out.println("Results found for " + locationService.displayName);
             System.out.println("Is this correct? (y/n)");
             
-            String userValidation = input.nextLine();
+            String userValidation = input.nextLine().trim().toLowerCase();
 
             if(userValidation.equals("y")) {
+                System.out.println("Loading Weather Data...");
                 return 1;
             } else if (userValidation.equals("n")) {
                 return -1;
@@ -66,8 +70,22 @@ public class Main {
     }
     
     public static void weatherService() {
-        weatherService = new WeatherService(locationService.latitude, locationService.longitude);
-        weatherService.main();
+        WeatherService weatherService = new WeatherService(locationService.latitude, locationService.longitude);
+        weatherService.setupData();
+
+        while(true) {
+            System.out.println("Would you like to use Farhrenheit or Celsius? (f/c)");
+            String temperaturePreference = input.nextLine().trim().toLowerCase();
+            if(temperaturePreference.equals("f") || temperaturePreference.equals("c")) {
+                weatherService.outputTodayData(temperaturePreference);
+                break;
+            } else {
+                System.out.println("You've entered something other than 'f' or 'c'");
+            }
+
+        }
+        
+
     }
 }
 

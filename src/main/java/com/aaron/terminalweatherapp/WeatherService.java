@@ -5,29 +5,43 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
 
+import com.google.gson.Gson;
+
 
 public class WeatherService {
-    public double latitude;
-    public double longitude;
 
+    // Will Hold all weather api response values
+    WeatherResponse weatherResponse; 
+    
+    // INstance Variables
+    public double latitude; 
+    public double longitude;
+    public String jsonString;
+
+    // Constructor
     public WeatherService(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public void main(){
-        if(setupAPI(getAPIString()).equals("error")) {
+    public void setupData(){
+        // Gets all the data in place
+        String APIString = getAPIString();
+
+        if(setupAPI(APIString).equals("error")) {
             // Do something with this error
         } 
 
-        String jsonString = setupAPI(getAPIString());
-        System.out.println(jsonString);
+        this.jsonString = setupAPI(APIString);
+        System.out.println(this.jsonString);
+        gsonService(); // Setups values for easing calling
 
     }
+    
     public String getAPIString(){
         String baseString = "https://api.open-meteo.com/v1/forecast?";
-        String coordinatesString = ("latitude="+latitude+"&longitude="+longitude);
-        String additionalString = ("&hourly=temperature_2m,precipitation_probability,rain,relative_humidity_2m");
+        String coordinatesString = ("latitude="+this.latitude+"&longitude="+this.longitude);
+        String additionalString = ("&daily=temperature_2m_max,temperature_2m_min,snowfall_sum,rain_sum,sunrise,sunset&timezone=auto");
 
         return baseString + coordinatesString + additionalString;
     }
@@ -47,7 +61,23 @@ public class WeatherService {
         }
     }
 
+    public void gsonService(){
+        Gson gson = new Gson();
+        weatherResponse = gson.fromJson(this.jsonString, WeatherResponse.class);
+    }
 
+    public void outputTodayData(String temperaturePreference) {
+        double lowestTemperature = weatherResponse.daily.temperature_2m_min[0];
+        double highestTemperature = weatherResponse.daily.temperature_2m_max[0];
+        if(temperaturePreference == "c") {
+            System.out.println("Temperatures will range from " + (int) Math.round(lowestTemperature) + " to " + (int) Math.round(highestTemperature) + " degrees Celsius.");
+        } else {
+            lowestTemperature = (lowestTemperature * 9 / 5 + 32);
+            highestTemperature = (highestTemperature * 9 / 5 + 32);
+            System.out.println("Temperatures will range from " + (int) Math.round(lowestTemperature) + " to " + (int) Math.round(highestTemperature) + " degrees Fahrenheit.");
 
+        }
+
+    }
 
 }
