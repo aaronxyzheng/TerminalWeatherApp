@@ -1,4 +1,3 @@
-# TerminalWeatherApp
 # Terminal Weather App
 
 A simple command-line weather application that fetches current weather data for any city worldwide.
